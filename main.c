@@ -257,13 +257,10 @@ void MainLoop() {
        WBPlusTree_Destroy();
 }
 
-void build_test();
-void delete_test();
 
 int main(int argc, char *argv[]) {
 	// set input_file, output_file
 	strcpy(input_file, "data/small-data.txt");
-	strcpy(output_file, "data/out.txt");
 	if (argc == 2) strcpy(input_file, argv[1]);
 	
 	MainLoop();

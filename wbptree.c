@@ -6,7 +6,7 @@
 #define false 0
 struct WBPlusTreeNode* Root;
 
-int MaxChildNumber = 3;
+int MaxChildNumber = 5;
 int TotalNodes;
 int split_count = 0;
 void clflush(volatile void *p)
@@ -409,8 +409,7 @@ void Delete(WBPlusTreeNode *Cur, int key){
 
     //printf("Cur->father : %d\n",temp->key[temp->slot_array[1]]);
 
-
-    /*Adjusting Non_leaf node*/
+/*
 
     if(Cur->isLeaf)
     {
@@ -429,9 +428,7 @@ void Delete(WBPlusTreeNode *Cur, int key){
             printf("key_num:%d\n",temp->key_num);
             printf("temp->bitmap : %d\n",temp->bitmap);
 
-            /*Making Null child pointer and adjustin*/
             //temp->child[temp->slot_array[index]+1] = NULL;
-            /* 
                for(i=index+1; i<=temp->key_num; i++)
                {
 
@@ -447,9 +444,9 @@ void Delete(WBPlusTreeNode *Cur, int key){
                for(i=0; i<5; i++)
                {
                printf("%p \n",temp->child[i]);
-               }*/
+               }
             Insert(temp,Cur->key[Cur->slot_array[1]],Cur);
-
+*/
         }
     }
 }
