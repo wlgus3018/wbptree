@@ -229,7 +229,7 @@ void MainLoop() {
                                     total = 0;
                                     temp = 0;
                                    // srand((unsigned)time(NULL));
-                                    for(j=1; j<=3; j++)
+                                    for(j=1; j<=10000; j++)
                                     {
                                         //start_time = clock();
                                         clock_gettime(CLOCK_REALTIME,&start);

@@ -447,8 +447,8 @@ void Delete(WBPlusTreeNode *Cur, int key){
                }
             Insert(temp,Cur->key[Cur->slot_array[1]],Cur);
 */
-        }
-    }
+        
+    
 }
 
 

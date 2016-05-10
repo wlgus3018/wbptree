@@ -1,0 +1,67 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Delete	wbptree.c	/^void Delete(WBPlusTreeNode *Cur, int key){$/;"	f
+Destroy	wbptree.c	/^void Destroy(WBPlusTreeNode* Cur) {$/;"	f
+Find	wbptree.c	/^WBPlusTreeNode* Find(int key) {$/;"	f
+Insert	wbptree.c	/^void Insert(WBPlusTreeNode* Cur, int key, void* value){$/;"	f
+MAX_CHILD_NUMBER	wbptree.h	4;"	d
+MAX_KEY	main.c	10;"	d	file:
+MainLoop	main.c	/^void MainLoop() {$/;"	f
+MaxChildNumber	wbptree.c	/^int MaxChildNumber = 5;$/;"	v
+New_WBPlusTreeNode	wbptree.c	/^WBPlusTreeNode* New_WBPlusTreeNode() {$/;"	f
+Read_Buffer	main.c	/^inline void Read_Buffer(char *input_file) {$/;"	f
+Read_Data_And_Insert	main.c	/^inline void Read_Data_And_Insert() {$/;"	f
+Root	wbptree.c	/^struct WBPlusTreeNode* Root;$/;"	v	typeref:struct:WBPlusTreeNode
+ShowHelp	main.c	/^void ShowHelp() {$/;"	f
+Split	wbptree.c	/^void Split(WBPlusTreeNode* Cur) {$/;"	f
+TotalNodes	wbptree.c	/^int TotalNodes;$/;"	v
+TotalRecords	main.c	/^const int TotalRecords = 2000000000;$/;"	v
+WBPlusTreeNode	wbptree.h	/^typedef struct WBPlusTreeNode {$/;"	s
+WBPlusTreeNode	wbptree.h	/^} WBPlusTreeNode;$/;"	t	typeref:struct:WBPlusTreeNode
+WBPlusTree_Delete	wbptree.c	/^int WBPlusTree_Delete(int key){$/;"	f
+WBPlusTree_Destroy	wbptree.c	/^void WBPlusTree_Destroy() {$/;"	f
+WBPlusTree_Find	wbptree.c	/^int WBPlusTree_Find(int key) {$/;"	f
+WBPlusTree_GetSplitCount	wbptree.c	/^int WBPlusTree_GetSplitCount(){$/;"	f
+WBPlusTree_GetTotalNodes	wbptree.c	/^int WBPlusTree_GetTotalNodes() {$/;"	f
+WBPlusTree_Init	wbptree.c	/^void WBPlusTree_Init() {$/;"	f
+WBPlusTree_Insert	wbptree.c	/^int WBPlusTree_Insert(int key, void* value) {$/;"	f
+WBPlusTree_Print	wbptree.c	/^void WBPlusTree_Print() {$/;"	f
+__BPlusTree_H__	wbptree.h	2;"	d
+bitmap	wbptree.h	/^        int bitmap;$/;"	m	struct:WBPlusTreeNode
+buffer	main.c	/^char *buffer;$/;"	v
+child	wbptree.h	/^	void* child[MAX_CHILD_NUMBER + 1];$/;"	m	struct:WBPlusTreeNode
+clflush	wbptree.c	/^void clflush(volatile void *p)$/;"	f
+false	main.c	9;"	d	file:
+false	wbptree.c	6;"	d	file:
+father	wbptree.h	/^	struct WBPlusTreeNode* father;$/;"	m	struct:WBPlusTreeNode	typeref:struct:WBPlusTreeNode::WBPlusTreeNode
+fsize	main.c	/^int fsize;$/;"	v
+gen	gen.py	/^def gen():$/;"	f
+input_file	main.c	/^char input_file[100];$/;"	v
+isLeaf	wbptree.h	/^	int isRoot, isLeaf;$/;"	m	struct:WBPlusTreeNode
+isRoot	wbptree.h	/^	int isRoot, isLeaf;$/;"	m	struct:WBPlusTreeNode
+key	wbptree.h	/^	int key[MAX_CHILD_NUMBER];$/;"	m	struct:WBPlusTreeNode
+key_num	main.c	/^int keys[250000000], key_num;$/;"	v
+key_num	wbptree.h	/^	int key_num;$/;"	m	struct:WBPlusTreeNode
+keys	main.c	/^int keys[250000000], key_num;$/;"	v
+last	wbptree.h	/^	struct WBPlusTreeNode* last;$/;"	m	struct:WBPlusTreeNode	typeref:struct:WBPlusTreeNode::WBPlusTreeNode
+main	gen.py	/^def main():$/;"	f
+main	main.c	/^int main(int argc, char *argv[]) {$/;"	f
+mfence	wbptree.c	/^void mfence(void)$/;"	f
+new_key	main.c	/^int new_key, new_pos, new_len;$/;"	v
+new_len	main.c	/^int new_key, new_pos, new_len;$/;"	v
+new_pos	main.c	/^int new_key, new_pos, new_len;$/;"	v
+new_st	main.c	/^char new_st[12];$/;"	v
+next	wbptree.h	/^	struct WBPlusTreeNode* next;$/;"	m	struct:WBPlusTreeNode	typeref:struct:WBPlusTreeNode::WBPlusTreeNode
+objects	Makefile	/^objects = main.o wbptree.o$/;"	m
+output_file	main.c	/^char output_file[100];$/;"	v
+slot_array	wbptree.h	/^        int slot_array[MAX_CHILD_NUMBER+1];$/;"	m	struct:WBPlusTreeNode
+slot_binary_search	wbptree.c	/^inline int slot_binary_search(WBPlusTreeNode* Cur, int key)$/;"	f
+split_count	wbptree.c	/^int split_count = 0;$/;"	v
+true	main.c	8;"	d	file:
+true	wbptree.c	5;"	d	file:
+unused	wbptree.h	/^        int unused[150];$/;"	m	struct:WBPlusTreeNode
+validRecords	main.c	/^int validRecords;$/;"	v

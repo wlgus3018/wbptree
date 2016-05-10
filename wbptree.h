@@ -1,14 +1,14 @@
 #ifndef __BPlusTree_H__
 #define __BPlusTree_H__
 
-#define MAX_CHILD_NUMBER 3
+#define MAX_CHILD_NUMBER 5
 
 typedef struct WBPlusTreeNode {
 	int isRoot, isLeaf;
 	int key_num;
 	int key[MAX_CHILD_NUMBER];
 	void* child[MAX_CHILD_NUMBER + 1];
-        int pos[MAX_CHILD_NUMBER]; // Non_used
+      //  int pos[MAX_CHILD_NUMBER]; // Non_used
         int bitmap;
 	struct WBPlusTreeNode* father;
 	struct WBPlusTreeNode* next;
