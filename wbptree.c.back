@@ -7,7 +7,7 @@
 struct WBPlusTreeNode* Root;
 
 void Logging_Shadowing(WBPlusTreeNode*);
-int MaxChildNumber = 5;
+int MaxChildNumber = 31;
 int TotalNodes;
 int split_count = 0;
 void clflush(volatile void *p)
@@ -76,7 +76,7 @@ void Logging_Shadowing(WBPlusTreeNode* Cur)
 void Insert(WBPlusTreeNode*, int,void*);
 void Split(WBPlusTreeNode* Cur) {
 
-    //Logging_Shadowing(Cur);
+    Logging_Shadowing(Cur);
     WBPlusTreeNode* Temp = New_WBPlusTreeNode();
     int Mid = MaxChildNumber >> 1;
     //printf("Mid : %d\n",Mid);
@@ -218,12 +218,8 @@ void Insert(WBPlusTreeNode* Cur, int key, void* value){
     int bit = 1;
     int t;
     int temp;
-/*
-    if(Cur->bitmap & 1 ==0)
-    {
 
-    }
-*/
+
     if(Cur->bitmap & 1 == 0)
     {
         sleep(10);
@@ -390,301 +386,122 @@ void Insert(WBPlusTreeNode* Cur, int key, void* value){
 }
 
 void Delete(WBPlusTreeNode*, int);
-
-int Merge(WBPlusTreeNode *Cur)
-{
-    WBPlusTreeNode *father = Cur->father;
-    int index = slot_binary_search(father,Cur->key[Cur->slot_array[1]]);
-    int max;
-    index--;
-    WBPlusTreeNode *next,*prev;
-    
-      printf("index merge : %d\n",index);
-      printf("father->key_num : %d\n",father->key_num);
-    
-      
-      
-    if(index == 0){
-
-        next = father->child[father->slot_array[index+1]+1];
-        prev = NULL;
-        
-
-            printf("next: %d\n",next->key[next->slot_array[1]]); 
-            Insert(next,Cur->key[Cur->slot_array[1]],Cur->child[Cur->slot_array[1]]);
-            Delete(father,next->key[next->slot_array[1]]);
-           
-            //Delete(father,Cur->key[Cur->slot_array[1]]);
-          //  free(Cur);
-            /* int i = slot_binary_search(father,next->key[next->slot_array[1]]);
-             i--;
-             if(father->key[father->slot_array[i]] == next->key[next->slot_array[1]])
-             {
-
-             }*/
-      
-
-        }
-    
-    else if(index == father->key_num)
-    {
-        printf("hi\n");
-        prev = father->child[father->slot_array[index-1]+1];//prev
-        next = NULL;
-        //printf("father key : %d\n",father->key[father->slot_array[1]]);
-        //printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-
-        
-        {
-            Insert(Cur,prev->key[prev->slot_array[prev->key_num]],prev->child[prev->slot_array[prev->key_num]]);
-            Delete(prev,prev->key[prev->slot_array[prev->key_num]]);
-            return true;
-        }
-    }
-    else
-    {   printf("hi2\n"); 
-        if(index == 1)
-        {
-            prev = father->child[0];
-        }
-        else
-        {
-            prev = father->child[father->slot_array[index]];
-        }
-
-        next = father->child[father->slot_array[index+1]+1];
-
-        printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-        printf("next :%d\n",next->key[next->slot_array[1]]);
-   
-        {
-            if(prev->key_num < next->key_num)
-            {
-
-                Insert(Cur,next->key[next->slot_array[1]],next->child[next->slot_array[1]]);
-                Delete(next,next->key[next->slot_array[1]]);
-                return true;
+void Resort(WBPlusTreeNode* Left, WBPlusTreeNode* Right) {
+    int total = Left->key_num + Right->key_num;
+    WBPlusTreeNode* temp;
+    if (Left->key_num < Right->key_num) {
+        int leftSize = total >> 1;
+        int i = 0, j = 0;
+        while (Left->key_num < leftSize) {
+            Left->key[Left->key_num] = Right->key[i];
+            Left->child[Left->key_num] = Right->child[i];
+            if (Left->isLeaf) {
+            } else {
+                temp = (WBPlusTreeNode*)(Right->child[i]);
+                temp->father = Left;
             }
-            else if(prev->key_num == next->key_num || prev->key_num > next->key_num)
-            {
-                printf("hi3\n");
-                Delete(father,Cur->key[Cur->slot_array[1]]);
-                Insert(prev,Cur->key[Cur->slot_array[1]],Cur->child[Cur->slot_array[1]]);
-                prev->next = Cur->next;
-                free(Cur);
-                return true;
-                }
-
-                }
-                
-
+            Left->key_num++;
+            i++;
+        }
+        while (i < Right->key_num) {
+            Right->key[j] = Right->key[i];
+            Right->child[j] = Right->child[i];
+            i++;
+            j++;
+        }
+        Right->key_num = j; 
+    } else {
+        int leftSize = total >> 1;
+        int i, move = Left->key_num - leftSize, j = 0;
+        for (i = Right->key_num - 1; i >= 0; i--) {
+            Right->key[i + move] = Right->key[i];
+            Right->child[i + move] = Right->child[i];
+        }
+        for (i = leftSize; i < Left->key_num; i++) {
+            Right->key[j] = Left->key[i];
+            Right->child[j] = Left->child[i];
+            if (Right->isLeaf) {
+            } else {
+                temp = (WBPlusTreeNode*)Left->child[i];
+                temp->father = Right;
+            }
+            j++;
+        }
+        Left->key_num = leftSize;
+        Right->key_num = total - leftSize;
     }
-
 }
-void replace(WBPlusTreeNode *Cur,int key)
-{
-    int i = slot_binary_search(Cur,key);
-    i--;
-    Cur->key[Cur->slot_array[i]] = key;
-}
-int Redistribute(WBPlusTreeNode *Cur)
-{
-        WBPlusTreeNode *father = Cur->father;
-    int index = slot_binary_search(father,Cur->key[Cur->slot_array[1]]);
-    int max;
-    index--;
-    WBPlusTreeNode *next,*prev;
-    printf("Redistribute!!\n");
-    printf("index : %d\n",index);
-    printf("father->key_num : %d\n",father->key_num);
-
-    printf("cur key :%d\n",Cur->key[Cur->slot_array[1]]);
-    printf("father->key[0]: %d\n",father->key[father->slot_array[1]]);
-
-    if(Cur->isLeaf)
-    {
-        if(index == 0){
-
-            next = father->child[father->slot_array[index+1]+1];
-            prev = NULL;
-            if(next->key_num ==2)
-            {
-                return false;
-            }
-            else
-            {
-                printf("next :%d\n",next->key[next->slot_array[1]]);
-
-                replace(father,next->key[next->slot_array[1]]);
-                Insert(Cur,next->key[next->slot_array[1]],next->child[next->slot_array[1]]);
-                Delete(next,next->key[next->slot_array[1]]);
 
 
-                return true;
-            }
+void Redistribute(WBPlusTreeNode* Cur) {
+    if (Cur->isRoot) {
+        if (Cur->key_num == 1 && !Cur->isLeaf) {
+            Root = Cur->child[Cur->slot_array[1]];
+            Root->isRoot = true;
+            free(Cur);
         }
-        else if(index == father->key_num)
-        {
-
-
-            prev = father->child[father->slot_array[index-1]+1];//prev
-
-            next = NULL;
-            //printf("father key : %d\n",father->key[father->slot_array[1]]);
-            printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-
-            if(prev->key_num  == 2)
-                return false;
-            else
-            {
-                printf("hi\n");
-
-                //printf("what is i : %d\n",i);
-                replace(father,Cur->key[Cur->slot_array[1]]);
-                Insert(Cur,prev->key[prev->slot_array[prev->key_num]],prev->child[prev->slot_array[prev->key_num]]);
-                Delete(prev,prev->key[prev->slot_array[prev->key_num]]);
-                // Insert(father,prev->key[prev->slot_array[prev->key_num]],Cur);
-
-                return true;
-            }
-        }
-        else
-        {
-            if(index == 1)
-            {
-                prev = father->child[0];
-            }
-            else
-            {
-                prev = father->child[father->slot_array[index]];
-            }
-            next = father->child[father->slot_array[index+1]+1];
-
-            printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-            printf("next :%d\n",next->key[next->slot_array[1]]);
-            if(prev->key_num == 2 && next->key_num == 2)
-                return false;
-            else
-            {
-                if(prev->key_num < next->key_num)
-                {
-                    Insert(Cur,next->key[next->slot_array[1]],next->child[next->slot_array[1]]);
-                    Delete(next,next->key[next->slot_array[1]]);
-                    return true;
-                }
-                else if(prev->key_num == next->key_num || prev->key_num > next->key_num)
-                {
-                    Insert(Cur,prev->key[prev->slot_array[prev->key_num]],prev->child[prev->slot_array[prev->key_num]]);
-                    Delete(prev,prev->key[prev->slot_array[prev->key_num]]);
-                    return true;
-                }
-
-            }
+        return;
+    }
+    WBPlusTreeNode* Father = Cur->father;
+    WBPlusTreeNode* prevChild;
+    WBPlusTreeNode* succChild;
+    WBPlusTreeNode* temp;
+    int my_index = slot_binary_search(Father, Cur->key[Cur->slot_array[1]]);
+    my_index--;
+    if (my_index + 1 < Father->key_num) {
+        succChild = Father->child[my_index + 2];
+        if ((succChild->key_num - 1) * 2 >= MaxChildNumber) { // at least can move one child to Cur
+            Resort(Cur, succChild); // (1) resort with right child
+            Father->key[my_index + 2] = succChild->key[succChild->slot_array[1]];
+            return;
         }
     }
-    else
-    {
-        if(index == 0){
-
-            next = father->child[father->slot_array[index+1]+1];
-            prev = NULL;
-            if(next->key_num ==2)
-            {
-                return false;
-            }
-            else
-            {
-                printf("next :%d\n",next->key[next->slot_array[1]]);
-
-                int i = slot_binary_search(next,father->key[father->slot_array[1]]);
-                i--;
-                printf("what is i : %d\n", i);
-                WBPlusTreeNode *n = next->child[i];
-                //printf("next->i :%p\n",n->next);
-    
-                printf("next->i :%p\n",n->next);
-                replace(father,next->key[next->slot_array[1]]);
-               // Delete(next,next->key[next->slot_array[1]]);
-
-
-                return true;
-            }
+    if (my_index - 1 >= 0) {
+        prevChild = Father->child[my_index];
+        if ((prevChild->key_num - 1) * 2 >= MaxChildNumber) {
+            Resort(prevChild, Cur); // (2) resort with left child
+            Father->key[my_index] = Cur->key[Cur->slot_array[1]];
+            return;
         }
-        else if(index == father->key_num)
-        {
-
-
-            prev = father->child[father->slot_array[index-1]+1];//prev
-
-            next = NULL;
-            //printf("father key : %d\n",father->key[father->slot_array[1]]);
-            printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-
-            if(prev->key_num  == 2)
-                return false;
-            else
-            {
-                printf("hi\n");
-
-                //printf("what is i : %d\n",i);
-                replace(father,Cur->key[Cur->slot_array[1]]);
-                Insert(Cur,prev->key[prev->slot_array[prev->key_num]],prev->child[prev->slot_array[prev->key_num]]);
-                Delete(prev,prev->key[prev->slot_array[prev->key_num]]);
-                // Insert(father,prev->key[prev->slot_array[prev->key_num]],Cur);
-
-                return true;
+    }/*
+    if (my_index + 1 < Father->key_num) { // (3) merge with right child
+        int i = 0;
+        while (i < succChild->key_num) {
+            Cur->key[Cur->key_num] = succChild->key[i];
+            Cur->child[Cur->key_num] = succChild->child[i];
+            if (Cur->isLeaf) {
+                Cur->pos[Cur->key_num] = succChild->pos[i];
+            } else {
+                temp = (BPlusTreeNode*)(succChild->child[i]);
+                temp->father = Cur;
             }
+            Cur->key_num++;
+            i++;
         }
-        else
-        {
-            if(index == 1)
-            {
-                prev = father->child[0];
-            }
-            else
-            {
-                prev = father->child[father->slot_array[index]];
-            }
-            next = father->child[father->slot_array[index+1]+1];
-
-            printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-            printf("next :%d\n",next->key[next->slot_array[1]]);
-            if(prev->key_num == 2 && next->key_num == 2)
-                return false;
-            else
-            {
-                if(prev->key_num < next->key_num)
-                {
-                    Insert(Cur,next->key[next->slot_array[1]],next->child[next->slot_array[1]]);
-                    Delete(next,next->key[next->slot_array[1]]);
-                    return true;
-                }
-                else
-                {
-                    Insert(Cur,prev->key[prev->slot_array[prev->key_num]],prev->child[prev->slot_array[prev->key_num]]);
-                    Delete(prev,prev->key[prev->slot_array[prev->key_num]]);
-                    return true;
-                }
-
-            }
-
-        }
+        Delete(Father, succChild->key[0]); // delete right child
+        return;
     }
-
-    //printf("index : %d\n",index);
-
-    //printf("cur key :%d\n",Cur->key[Cur->slot_array[1]]);
-    //printf("father : %p\n",father);
-    // printf("father key : %d\n",father->key[father->slot_array[1]]);
-    // printf("next :%d\n",next->key[next->slot_array[1]]);
-   // printf("prev :%d\n",prev->key[prev->slot_array[1]]);
-   // printf("next->key_num: %d\n",next->key_num);
-    //printf("prev->key_num: %d\n",prev->key_num);
-   // sleep(5);
-    
-
-
+    if (my_index - 1 >= 0) { // (4) merge with left child
+        int i = 0;
+        while (i < Cur->key_num) {
+            prevChild->key[prevChild->key_num] = Cur->key[i];
+            prevChild->child[prevChild->key_num] = Cur->child[i];
+            if (Cur->isLeaf) {
+                prevChild->pos[prevChild->key_num] = Cur->pos[i];
+            } else {
+                temp = (BPlusTreeNode*)(Cur->child[i]);
+                temp->father = prevChild;
+            }
+            prevChild->key_num++;
+            i++;
+        }
+        Delete(Father, Cur->key[0]); // delete left child
+        return;
+    }*/
+    //printf("What?! you're the only child???\n"); // this won't happen
 }
+
+
 void Delete(WBPlusTreeNode *Cur, int key){
    
     int ins;
@@ -695,14 +512,11 @@ void Delete(WBPlusTreeNode *Cur, int key){
 
     
     ins = slot_binary_search(Cur,key);
-
     ins--;
-
-    
     bit_pos = 1 << (Cur->slot_array[ins]+1);
     //Findiing bit position
     Cur->bitmap = Cur->bitmap - bit_pos;
-    Cur->key[Cur->slot_array[ins]] = 0;
+    //Cur->key[Cur->slot_array[ins]] = 0;
     clflush(&Cur->bitmap); mfence();
     clflush(&Cur->key[Cur->slot_array[ins]]);
 
@@ -724,7 +538,7 @@ void Delete(WBPlusTreeNode *Cur, int key){
     }*/
 
     clflush(&Cur->key_num);
-/*
+
     if(Cur->isLeaf == false){
         delChild = Cur->child[ins+1];
         WBPlusTreeNode* firstChild = (WBPlusTreeNode*)(Cur->child[Cur->slot_array[1]]);
@@ -738,25 +552,14 @@ void Delete(WBPlusTreeNode *Cur, int key){
 
         }
     }
-*/    
-    printf("ins : %d\n",ins);
-    if(Cur->key_num  == 1)
-    {
-
-        printf("key!!\n");
-     if(Redistribute(Cur) == false)
-      {
-          printf("Merge!!\n");
-          Merge(Cur);
-      }
-    }
+    
     
     if(ins == 1 && !Cur->isRoot){
-        printf("Normal ins : %d\n",ins);
 
         WBPlusTreeNode *temp,*father;
         temp = Cur;
         father = temp->father;
+        bit_pos = 0;
         while(!temp->isRoot && temp == father->child[father->slot_array[1]])
         {
             father->key[father->slot_array[1]] = Cur->key[Cur->slot_array[1]];
@@ -767,22 +570,17 @@ void Delete(WBPlusTreeNode *Cur, int key){
             int i = slot_binary_search(temp, key);
             i--;
             temp->key[temp->slot_array[i]] = Cur->key[Cur->slot_array[1]];
-            printf("Cur->key[Cur->slot_array[1]] : %d\n",Cur->key[Cur->slot_array[1]]);
         }
-    
+
     }
-    if(Cur->isRoot)
-        {
-            if(Cur->key_num == 0)
-            {
-                Root = Cur->child[Cur->slot_array[1]];
-                Root->isRoot = true;
-                free(Cur);
-            }
-        }
 
+    if(Cur->key_num *2 < MaxChildNumber)
+    {
+      Redistribute(Cur);
+    }
 
-
+        
+    
 }
 
 
@@ -868,7 +666,7 @@ int WBPlusTree_Find(int key) {
         i--;
        // printf("Leaf->key[i] : %d\n",Leaf->key[Leaf->slot_array[i]]);
        // printf("Find key : %d\n",key);
-	if (Leaf->key[Leaf->slot_array[i]] == key) return -1;
+	if (Leaf->key[Leaf->slot_array[i]] == key) return -1; // don't have this key
 
 	
        // printf("Leaf->pos[i] : %d\n",Leaf->pos[i]);
@@ -877,6 +675,7 @@ int WBPlusTree_Find(int key) {
 
 void WBPlusTree_Destroy() {
 	if (Root == NULL) return;
+	printf("Now destroying B+tree ..\n");
 	Destroy(Root);
 	Root = NULL;
 	printf("Done.\n");
@@ -957,7 +756,7 @@ void WBPlusTree_Print() {
             break;
         else
         {
-            Leaf = Leaf->child[0];
+            Leaf = Leaf->child[Leaf->slot_array[1]];
         }
         }
         while (Leaf != NULL) {
