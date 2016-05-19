@@ -5,15 +5,15 @@
 #define DUPLICATE -1
 #define NONEXIST -2
 typedef struct WBPlusTreeNode {
+        unsigned long int bitmap;
+        unsigned char slot_array[MAX_CHILD_NUMBER+1];
 	int isRoot, isLeaf;
 	int key_num;
 	int key[MAX_CHILD_NUMBER];
 	void* child[MAX_CHILD_NUMBER + 1];
-        long int bitmap;
 	struct WBPlusTreeNode* father;
 	struct WBPlusTreeNode* next;
 	struct WBPlusTreeNode* last;
-        unsigned char slot_array[MAX_CHILD_NUMBER+1];
         int unused[14];
 } WBPlusTreeNode;
 
