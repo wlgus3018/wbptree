@@ -7,7 +7,7 @@
 
 #define true 1
 #define false 0
-#define MAX_KEY 2500000000
+#define MAX_KEY 50000000
 #define BILLION 1000000000L
 
 // file
@@ -19,10 +19,10 @@ int fsize;
 int new_key, new_pos, new_len;
 char new_st[12];
 // data
-const int TotalRecords = 2500000000;
+int TotalRecords = 50000000;
 int validRecords;
 // test
-int keys[250000000], key_num;
+unsigned int keys[50000000], key_num;
 
 /**
 * Read_Buffer(char *input_file) -> buffer
@@ -80,7 +80,8 @@ inline void Read_Data_And_Insert(char *buff) {
         /*Non Duplicate key*/
         if(ret == DUPLICATE)
         {
-          //  sleep(10);
+            //printf("key :%d\n",new_key);
+            //sleep(10);
             continue;
         }
         if (WBPlusTree_Insert(new_key, value) == true) {
@@ -98,6 +99,7 @@ inline long long unsigned int Read_Data_And_Search(char *buff) {
     int rid = 0;
     int ret;
     int cur = 0;
+        int count =0;
     struct timespec start,end;
     long long unsigned int diff_time,total = 0;
     while (1) {
@@ -125,10 +127,13 @@ inline long long unsigned int Read_Data_And_Search(char *buff) {
 
         diff_time = BILLION * (end.tv_sec - start.tv_sec)+(end.tv_nsec - start.tv_nsec);
         total += diff_time;
-        if(ret == DUPLICATE)
+        if(ret == -1)
+        {
+        //    printf("It have\n");
+            count++; 
+      //  printf("Count: %d\n",count);        
             continue;
-
-        
+        }
     }
     free(buff);
     buff = NULL;
@@ -140,6 +145,7 @@ inline long long unsigned int Read_Data_And_Delete(char *buff) {
     int ret;
     int cur = 0;
     int count = 0;
+    int out = 1;
     struct timespec start,end;
     long long unsigned int diff_time,total = 0;
     while (1) {
@@ -163,24 +169,39 @@ inline long long unsigned int Read_Data_And_Delete(char *buff) {
 
         
 
+       
+      /* 
+        printf("---------------------------\n");
+        printf("new_key : %d\n",new_key);
+        printf("---------------------------\n");
+      
+        */
+        // sleep(1);
         clock_gettime(CLOCK_REALTIME,&start);
         ret = WBPlusTree_Delete(new_key);
         clock_gettime(CLOCK_REALTIME,&end);
         diff_time = BILLION * (end.tv_sec - start.tv_sec)+(end.tv_nsec - start.tv_nsec);
         total += diff_time;
-        //validRecords--;
+    
         
-        
+        out++;
+        /*
+        if(out == 19)
+        {
+            return ;
+        }
+*/
+
         if(ret == -2)
         {
-            //printf("Don't have !\n");
+           // printf("Don't have !\n");
             count++;
             continue;
         }
-    }
+           }
     free(buff);
     buff = NULL;
-    printf("Non valid record : %d\n",count);
+  printf("Non valid record : %d\n",count);
     return total;
 }
 
@@ -194,7 +215,7 @@ void ShowHelp() {
 	printf("  Input your operation:\n");
 	printf("  0 :Build Tree\n");
 	printf("  1 :Experiment\n");
-	printf("  2 :Query on a key(future work)\n");
+	printf("  2 :Search\n");
 	printf("  3 :Delete value on a key\n");
 	printf("  4 :Insert new record\n");
 	printf("  5 :Quit\n");
@@ -241,6 +262,7 @@ void MainLoop() {
                                 
                                 printf("Total split count : %d\n",WBPlusTree_GetSplitCount());
                                 break;
+
                             }
                     case 1: {
                                 long long unsigned int total = 0;
@@ -255,7 +277,7 @@ void MainLoop() {
                                 Read_Data_And_Insert(buffer2);
                                 clock_gettime(CLOCK_REALTIME,&end);
                                 diff_time = BILLION * (end.tv_sec - start.tv_sec)+(end.tv_nsec - start.tv_nsec);
-                                WBPlusTree_Print();
+                        //       WBPlusTree_Print();
                                 total += diff_time;
                                 printf("Valid Records inser/ted on WB+tree = %d\n", validRecords);
                                 printf("Total number of WB+tree nodes = %d\n",WBPlusTree_GetTotalNodes());
@@ -263,6 +285,7 @@ void MainLoop() {
 
                                 printf("Total split count : %d\n",WBPlusTree_GetSplitCount());
                                 printf("Node size %lu byte\n",sizeof(struct WBPlusTreeNode));
+                                //exit(0);
                                 break;
                             }
                     case 2: {
@@ -283,6 +306,7 @@ void MainLoop() {
                             }
 
                     case 3: {
+                              /* 
                                 printf("input key: ");
                                 int key;
                                 int result;
@@ -298,20 +322,22 @@ void MainLoop() {
                                 diff_time = (end.tv_sec - start.tv_sec) + ((end.tv_nsec- start.tv_nsec)/1000000000);
                                 WBPlusTree_Print();
                                 printf("result is %d\n",result);
+                                */
                                
-                                /*
                                 long long unsigned int total = 0;
 
                                 buffer2 = Read_Buffer(buffer2,input_file2);
                                total = Read_Data_And_Delete(buffer2);
                                 
+                              //  WBPlusTree_Print();
                                 printf("Valid Records on WB+tree = %d\n", validRecords);
                                 printf("Total time %llu msecond(s) elapsed\n",total/1000000);
 
                                 printf("Node size %lu byte\n",sizeof(struct WBPlusTreeNode));
+                                exit(0);
                                 break;
-                                */
 
+                                
                                 break;
                             }
                         case 4: {
@@ -339,21 +365,46 @@ void MainLoop() {
                                     printf("\n");
                                     break;
                                 }
-                        case 5: return;
+                        case 5: 
+                                WBPlusTree_Print();
+                                exit(0);
+                                break;
                         case 6:{
                                     int num,j;
                                     int value;
                                     long long int total;
-                                    char s[] = "dkdka";
+                                    int key[87];
+                                    key[1]=34;key[2]=244;key[3]=9;key[4]=10;key[5]=168;
+                                    key[6]=297;key[7]=280;key[8]=228;key[9]=133;
+                                    key[10]=150;key[11]=247;key[12]=279;key[13]=119;key[14]=260;
+                                    key[15]=115;key[16]=208;key[17]=300;key[18]=35;key[19]=184;
+                                    key[20]=76;key[21]=144;key[22]=136;key[23]=244;key[24]=72;
+                                    key[25]=176;key[26]=235;key[27]=112;key[28]=129;key[29]=15;
+                                    key[30]=100;key[31]=256;key[32]=296;key[33]=226;key[34]=99;
+                                    key[35]=199;key[36]=32;key[37]=114;key[38]=71;key[39]=281;
+                                    key[40]=166;key[41]=9;key[42]=162;key[43]=53;key[44]=220;
+                                    key[45]=131;key[46]=211;key[47]=73;key[48]=217;key[49]=84;
+                                    key[50]=134;key[51]=224;key[52]=232;key[53]=121;key[54]=159;
+                                    key[55]=25;key[56]=106;key[57]=203;key[58]=90;key[59]=170;
+                                    key[60]=156;key[61]=149;key[62]=54;key[63]=124;key[64]=21;
+                                    key[65]=231;key[66]=216;key[67]=118;key[68]=67;key[69]=87;
+                                    key[70]=291;key[71]=122;key[72]=7;key[73]=285;key[74]=75;
+                                    key[75]=222;key[76]=289;key[77]=230;key[78]=109;key[79]=69;
+                                    key[80]=271;key[81]=29;key[82]=252;key[83]=270;key[84]=116;
+                                    key[85]=22;key[86]=24;key[87]=174;
+
+                             
                                     value = 4;
                                     total = 0;
                                     srand((unsigned)time(NULL));
-                                    for(j=1; j<=500000; j++)
+                                    for(j=1; j<=18; j++)
                                     {
                                         //num = rand() % 1000000 + 1 ;
                                         //start_time = clock();
                                         clock_gettime(CLOCK_REALTIME,&start);
-                                       WBPlusTree_Insert(j,s);
+                                     //  WBPlusTree_Insert(j,s);
+                                        printf("--------key[%d] : %d\n",j,key[j]);
+                                        WBPlusTree_Delete(key[j]);
                                         clock_gettime(CLOCK_REALTIME,&end);
                                         diff_time = BILLION *(end.tv_sec - start.tv_sec) + end.tv_nsec- start.tv_nsec;
 
@@ -362,7 +413,7 @@ void MainLoop() {
 
                                         validRecords++;
                                     }
-                                   // WBPlusTree_Print();
+                                    WBPlusTree_Print();
                                     printf("Valid Records inserted on WB+tree = %d\n", validRecords);
                                     printf("Total number of WB+tree nodes = %d\n", WBPlusTree_GetTotalNodes());
                 
@@ -370,13 +421,14 @@ void MainLoop() {
 
                                 printf("Total split count : %d\n",WBPlusTree_GetSplitCount());
                                     printf("\n");
+                                    exit(0);
                                     break;
                                 }
 
                         default: break;
                 }
         }
-       WBPlusTree_Destroy();
+      // WBPlusTree_Destroy();
 }
 
 
