@@ -200,7 +200,7 @@ void Split(WBPlusTreeNode* Cur) {
     int Mid = MaxChildNumber >> 1;
     //printf("Mid : %d\n",Mid);
     Temp->isLeaf = Cur->isLeaf;
-    Temp->key_num = MaxChildNumber - Mid;
+   // Temp->key_num = MaxChildNumber - Mid;
     //printf("Temp->key_num : %d\n",Temp->key_num);
     int i;
     split_count++;
@@ -615,9 +615,8 @@ unsigned int Finding_Moving_Child(WBPlusTreeNode *father, WBPlusTreeNode *Cur)
  //   printf("Finding index : %d\n",index);
   //  printf("Cur->key : %d\n",Cur->key[Cur->slot_array[1]]);
 
-    WBPlusTreeNode *temp = Cur->child[0];
+    //WBPlusTreeNode *temp = Cur->child[0];
    // printf("temp:%d\n",temp->key[temp->slot_array[1]]);
-    while(1)
     {
         
         if(index == 0)
@@ -864,8 +863,8 @@ int Merge(WBPlusTreeNode *Cur)
 
                 if(prev->key_num <=2 &&prev->key_num < next->key_num)
                 {
-                  //  printf("Come here impossible\n");
-                    // sleep(100);
+                    printf("Come here impossible\n");
+                     sleep(100);
 
                     for(j=0; j<next->key_num; j++)
                     {
@@ -1457,7 +1456,6 @@ void Delete(WBPlusTreeNode *Cur, int key){
         printf("Root!!\n");
     }*/
    Cur->bitmap = Cur->bitmap - 1;
-   clflush(&Cur->bitmap); mfence();
 
     bit_pos = 1 << (Cur->slot_array[ins]+1);
     //Findiing bit position
@@ -1474,17 +1472,20 @@ void Delete(WBPlusTreeNode *Cur, int key){
         //Cur->slot_array[i] = 0;
     }
     Cur->slot_array[Cur->key_num] = 0;
+    
+    /*
     for(i=0; i< Cur->key_num; i+=8 )
     {
         clflush(&Cur->slot_array[i]);
     }
-    mfence();
+    mfence();*/
     Cur->key_num = Cur->key_num - 1;
     //Cur->slot_array[i+1] = 0;
     Cur->slot_array[0] = Cur->key_num;
+    /*
     clflush(&Cur->key_num);
     clflush(&Cur->slot_array[0]);
-    mfence();
+    mfence();*/
     /* clear slot_aray == 0
     if(Cur->key_num == 0)
     {

@@ -18,7 +18,6 @@ typedef struct WBPlusTreeNode {
 } WBPlusTreeNode;
 
 extern void WBPlusTree_Init();
-//extern void WBPlusTree_Destroy();
 extern int WBPlusTree_Insert(int, void*);
 extern int WBPlusTree_GetTotalNodes();
 extern int WBPlusTree_GetSplitCount();
